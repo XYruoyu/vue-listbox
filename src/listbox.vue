@@ -5,9 +5,9 @@
       <div
         v-for="(item, index) in data"
         :key="index"
-        :class="{ selected: item[valueProp] === value }"
+        :class="{ selected: (valueProp?item[valueProp]:item) === value }"
         class="list-item"
-        @click="singleChoose(item[valueProp])"
+        @click="singleChoose(valueProp?item[valueProp]:item)"
       >
         <span>{{ label ? item[label] : item }}</span>
       </div>
@@ -16,8 +16,8 @@
       <div
         v-for="(item, index) in data"
         :key="index"
-        :class="[{ selected: selItems.includes(item[valueProp]) }, 'list-item']"
-        @click="multiChoose(item)"
+        :class="[{ selected: selItems.includes(valueProp?item[valueProp]:item) }, 'list-item']"
+        @click="multiChoose(valueProp?item[valueProp]:item)"
       >
         <span>{{ label ? item[label] : item }}</span>
       </div>
@@ -44,15 +44,16 @@ export default {
       this.$emit('input', val)
     },
     multiChoose(item) {
-      this.selItems.includes(item[this.valueProp]) ? this.selItems.splice(this.selItems.indexOf(item[this.valueProp]), 1) : this.selItems.push(item[this.valueProp])
+      this.selItems.includes(item) ? this.selItems.splice(this.selItems.indexOf(item), 1) : this.selItems.push(item)
       this.$emit('change', this.selItems)
     },
   },
 }
 </script>
-<style>
+
+<style lang="scss" scoped>
 .tp-list {
-  overflow-y: scroll;
+  overflow-y: auto;
   border: solid 1px silver;
 }
 .list-item {
@@ -61,11 +62,11 @@ export default {
   cursor: pointer;
   transition: background-color 0.2s;
   padding: 10px;
-}
-.list-item:hover {
-  background-color: #f4f4f4;
-}
-.list-item.selected {
-  background-color: rgb(216, 238, 255);
+  &:hover {
+    background-color: #f4f4f4;
+  }
+  &.selected {
+    background-color: rgb(216, 238, 255);
+  }
 }
 </style>
